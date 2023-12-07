@@ -23,8 +23,3 @@ docker build
 ```shell
 docker build -t zouchanglin/mnemosyne:1.0 ./
 ```
-
-有道英语发音接口 (type 1 为英音 2 为美音)
-```
-https://dict.youdao.com/dictvoice?audio={word}&type={1|2}
-```
