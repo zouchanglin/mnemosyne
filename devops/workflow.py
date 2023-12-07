@@ -62,9 +62,9 @@ def build():
     if not os.path.exists(repo_dir):
         # 目录不存在，使用git clone
         subprocess.run(["git", "clone", repo_url, repo_dir])
-    else:
-        # 目录存在，使用git pull
-        subprocess.run(["git", "pull"], cwd=repo_dir)
+    
+    # 目录存在，使用git pull
+    subprocess.run(["git", "pull"], cwd=repo_dir)
 
     print("git pull: finish!")
     # 2、docker build
@@ -91,7 +91,7 @@ def build():
         content = f.read()
         content = content.replace('tag', new_image_tag)
         content = content.replace('openai_api_key', os.environ.get('OPENAI_API_KEY', ''))
-        content = content.replace('mysql_url', os.environ.get('MYSQL_UTL', ''))
+        content = content.replace('mysql_url', os.environ.get('MYSQL_URL', ''))
         with open('./docker-compose.yaml', 'w') as wf:
             wf.write(content)
             print('docker-compose.yaml写入成功， 开始启动容器')

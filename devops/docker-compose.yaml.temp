@@ -6,6 +6,6 @@ services:
     restart: always
     environment:
       OPENAI_API_KEY: openai_api_key
-      MYSQL_UTL: mysql_url
+      MYSQL_URL: mysql_url
     ports:
       - "5005:5005"
