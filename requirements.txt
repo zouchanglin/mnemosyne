@@ -1,0 +1,10 @@
+Flask~=2.2.5
+pytest~=7.4.0
+Flask-APScheduler~=1.12.4
+Flask-SQLAlchemy~=3.0.5
+pymysql~=1.1.0
+gunicorn~=21.2.0
+SQLAlchemy~=2.0.22
+chromadb~=0.4.14
+openai~=1.2.2
+Flask-Cors~=4.0.0

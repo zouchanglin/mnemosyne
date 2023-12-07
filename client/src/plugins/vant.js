@@ -1,0 +1,70 @@
+import Vue from 'vue'
+
+// 导入弹框提示组件
+import {
+    Button,
+    Tabbar,
+    TabbarItem,
+    Form,
+    Field,
+    Cell,
+    CellGroup,
+    Row,
+    Col,
+    Icon,
+    Notify,
+    Toast,
+    Grid,
+    GridItem,
+    Tag,
+    Calendar,
+    NavBar,
+    Popup,
+    List,
+    Divider,
+    SwipeCell,
+    Tab,
+    Tabs,
+    Search,
+    Popover,
+    Empty,
+    Badge,
+    Sticky,
+    Step,
+    Steps,
+    Circle,
+    Overlay
+} from 'vant'
+
+Vue.use(Button)
+Vue.use(Tabbar)
+Vue.use(TabbarItem)
+Vue.use(Form)
+Vue.use(Field)
+Vue.use(Cell)
+Vue.use(CellGroup)
+Vue.use(Row)
+Vue.use(Col)
+Vue.use(Icon)
+Vue.use(Notify)
+Vue.use(Toast)
+Vue.use(Grid)
+Vue.use(GridItem)
+Vue.use(Tag)
+Vue.use(Calendar)
+Vue.use(NavBar)
+Vue.use(Popup)
+Vue.use(List)
+Vue.use(Divider)
+Vue.use(SwipeCell)
+Vue.use(Tab)
+Vue.use(Tabs)
+Vue.use(Search)
+Vue.use(Popover)
+Vue.use(Empty)
+Vue.use(Badge)
+Vue.use(Sticky)
+Vue.use(Step)
+Vue.use(Steps)
+Vue.use(Circle)
+Vue.use(Overlay)
