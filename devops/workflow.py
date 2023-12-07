@@ -22,8 +22,8 @@ else:
 app = Flask(__name__)
 
 # 定义一些目录常量
-# DOCKER_BUILD_PATH = '/mnt/ssd/devops'
-DOCKER_BUILD_PATH = '~/devops'
+DOCKER_BUILD_PATH = '/mnt/ssd/devops'
+# DOCKER_BUILD_PATH = '/Users/meng/Downloads/devops'
 repo_dir = DOCKER_BUILD_PATH + '/mnemosyne'
 print(repo_dir)
 
@@ -62,7 +62,8 @@ def build():
     if not os.path.exists(repo_dir):
         # 目录不存在，使用git clone
         subprocess.run(["git", "clone", repo_url, repo_dir])
-    
+    subprocess.run(["git", "checkout", "main"], cwd=repo_dir)
+    subprocess.run(["pwd"], cwd=repo_dir)
     # 目录存在，使用git pull
     subprocess.run(["git", "pull"], cwd=repo_dir)
 
