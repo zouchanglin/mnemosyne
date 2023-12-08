@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  mnemosyne:
+    image: mnemosyne:tag
+    restart: always
+    environment:
+      OPENAI_API_KEY: openai_api_key
+      MYSQL_URL: mysql_url
+    ports:
+      - "5005:5005"
