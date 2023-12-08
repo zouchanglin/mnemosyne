@@ -8,8 +8,8 @@ WORKDIR /app
 #复制requirements.txt
 COPY requirements.txt requirements.txt
 #安装依赖包
-RUN pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple some-package
 RUN pip install pysqlite3-binary
+RUN pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple some-package
 #复制当前目录下的内容到docker中
 COPY . .
 EXPOSE 5005
