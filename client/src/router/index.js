@@ -8,6 +8,7 @@ import Notify from '../components/Notify'
 
 import WordList from '@/components/WordList.vue'
 import AIReading from '@/components/MainChild/AIReading.vue'
+import ImportContent from '@/components/MainChild/ImportContent.vue'
 import WordStudy from '@/components/MainChild/WordStudy.vue'
 import WordRevise from '@/components/MainChild/WordRevise.vue'
 import AccountSetting from '@/components/MeChild/AccountSetting'
@@ -53,6 +54,10 @@ const routes = [
   {
     path: '/word-revise',
     component: WordRevise
+  },
+  {
+    path: '/import-content',
+    component: ImportContent
   },
   {
     path: '/none',

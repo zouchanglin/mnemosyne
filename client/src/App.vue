@@ -13,8 +13,6 @@ export default {
 
   },
   mounted() {
-    console.log(Dialog)
-    Dialog({ message: 'xx' })
     Dialog.confirm({
       title: '全屏模式',
       message: '是否需要进入全屏沉浸式体验?'

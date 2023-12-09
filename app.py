@@ -33,6 +33,8 @@ from business.models import Base, User
 # 添加日志配置
 logHandler = log_handler.get_log_handler()
 app.logger.addHandler(logHandler)
+app.json.ensure_ascii = False
+
 
 # 配置数据库(develop)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
@@ -80,7 +82,7 @@ def error_handler(e):
     """
     全局异常捕获，也相当于一个视图函数
     """
-    logging.exception(e)
+    app.logger.exception(e)
     return UnityResponse.error(msg=str(e))
 
 
@@ -99,14 +101,18 @@ if __name__ == '__main__':
     from business.article_study import ArticleCore
     from business.embedding.vector_tools import WordVector
     from business.ebbinghaus import Ebbinghaus
+    from business.file_manager import FileManager
     from business.log.log_sse import LogSSE
     from business.log.ping_sse import PingSSE
+    from business.ocr_assistant import OCRAssistant
 
     app.register_blueprint(Authorize)
     app.register_blueprint(WordCore)
     app.register_blueprint(ArticleCore)
     app.register_blueprint(WordVector)
     app.register_blueprint(Ebbinghaus)
+    app.register_blueprint(FileManager)
     app.register_blueprint(LogSSE)
     app.register_blueprint(PingSSE)
+    app.register_blueprint(OCRAssistant)
     app.run(host='0.0.0.0', port=5005, debug=False)

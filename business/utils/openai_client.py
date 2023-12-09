@@ -8,7 +8,7 @@ client = OpenAI(
 )
 
 try:
-    # client.files.list()
+    client.files.list()
     print('OpenAI proxy 工作正常')
 except APITimeoutError as e:
     print('OpenAI proxy:', e)
