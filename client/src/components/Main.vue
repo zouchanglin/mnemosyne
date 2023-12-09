@@ -10,14 +10,10 @@
     <van-cell-group inset>
       <van-cell title="今日待复习" value="72个单词"/>
     </van-cell-group>
-    <div id="myChart" style="width: 100%;height:300px;"/>
-    <div id="myChart2" style="width: 100%;height:300px;"/>
     <van-row>
-<!--      <van-col span="12">-->
-<!--        <div v-html="html"></div>-->
-<!--      </van-col>-->
-      <van-col span="12">
-
+      <van-col span="24" style="text-align: center">
+<!--        <iframe src="https://youdao.com/result?word=novel&lang=en" style="border: 0; width: 100%; height: 500px">-->
+<!--        </iframe>-->
       </van-col>
     </van-row>
   </div>

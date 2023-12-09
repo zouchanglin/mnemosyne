@@ -1,48 +1,43 @@
 <template>
     <div>
-        <van-popup v-model="show" position="bottom"
-                   :style="{ height: height }"
-                   round
-                   @close="close_word_card"
-                   style="text-align: center; background: #fafafa">
-            <van-row style="text-align: left; padding-top: 20px" v-if="word_detail.word !== ''" >
-                <van-col span="3"></van-col>
-                <van-col span="13">
-                    <span style="font-size: 22px">{{ word_detail.word }}</span>&nbsp;&nbsp;
-                    <span style="font-size: 12px; color: #525252">/{{ word_detail.usphone }}/</span>
-                    <br><br>
-                    <span style="font-size: 14px; color: #505050;">{{ word_detail.trans }}</span>
-                </van-col>
-                <van-col span="3">
-                    <van-button plain type="primary" @click="click_voice">
-                        <van-icon name="volume-o"/>
-                    </van-button>
-                </van-col>
-                <van-col span="3">
-                    <van-button plain type="info">
-                        <van-icon name="more-o" @click="get_vector_word"/>
-                    </van-button>
-                </van-col>
-                <van-col span="2"></van-col>
+      <van-overlay :show="show" @click="show = false" :lock-scroll="false">
+        <div class="wrapper" @click.stop>
+          <div class="block">
+            <!-- 两端对齐 -->
+            <van-row type="flex" justify="space-between">
+              <van-col span="3"></van-col>
+              <van-col span="18" style="text-align: center; margin-top: 10px">
+                <span style="font-size: 24px;">{{ word_detail.word }}</span>
+              </van-col>
+              <van-col span="3" style="text-align: right">
+                <van-icon name="close" size="30" @click="show = false" style="margin-right: 10px; margin-top: 10px"/>
+              </van-col>
             </van-row>
-
-            <van-row style="text-align: left; padding: 20px;" v-if="vector_link_words.length > 0">
-                <van-col span="24">
-                    <van-cell-group inset style="overflow: auto; height: 50vh; padding: 0">
-                        <van-cell v-for="w in vector_link_words" :key="w.id" :title="w.word" :label="w.trans" />
-                    </van-cell-group>
-                </van-col>
+            <van-row style="text-align: center; margin-top: 10px; margin-left: 10px; margin-right: 10px">
+              <span style="font-size: 14px; color: #505050;">{{ word_detail.trans }}</span>
+              <van-divider />
             </van-row>
-
-            <van-row class="fixed-bottom">
-                <van-grid style="width: 100%">
-                    <van-grid-item v-if="word_detail.learned" icon="completed-o" text="学过"/>
-                    <van-grid-item v-if="word_detail.killed" icon="passed" text="已斩"/>
-                    <van-grid-item icon="close" :text="'错' + word_detail.error_count + '次'"/>
-                    <van-grid-item icon="fire-o" :text="'引用' + word_detail.pitch_count + '次'"/>
-                </van-grid>
+            <van-row>
+              <van-tabs v-model="activeName" ref="tabs">
+                <van-tab title="语意关联词" name="word">
+                  <van-list
+                      style="overflow: auto; height: 30vh; padding-left: 30px"
+                      v-model="loading"
+                      :finished="finished"
+                      finished-text="没有更多了"
+                  >
+                    <van-cell v-for="w in vector_link_words" :key="w.id" :title="w.word" :label="w.trans" @click="get_word_detail(w.id)"/>
+                  </van-list>
+                </van-tab>
+                <van-tab title="网络释义" name="youdao">
+                  <iframe :src="word_url" style="border: 0; width: 100%; height: 30vh">
+                  </iframe>
+                </van-tab>
+              </van-tabs>
             </van-row>
-        </van-popup>
+          </div>
+        </div>
+      </van-overlay>
     </div>
 </template>
 
@@ -56,6 +51,10 @@ export default {
     },
     data() {
         return {
+            loading: false,
+            finished: false,
+            word_url: '',
+            activeName: 'word',
             show: false,
             audio: new Audio(),
             word_detail: {
@@ -83,6 +82,7 @@ export default {
             }
             this.get_word_detail(newVal)
             this.show = true
+            this.$refs.tabs.resize()
         }
     },
     methods: {
@@ -103,13 +103,7 @@ export default {
             // console.log('vector->', ret.data)
             // 展示出关联词
             this.vector_link_words = ret.data
-        },
-        close_word_card() {
-            this.height = '28%'
-            this.$emit('close_word_card')
-            this.vector_link_words = []
-            this.vector_words_height = '0px'
-            this.word_detail.word = ''
+            this.finished = true
         },
         async get_word_detail(id) {
             const params = { id: id }
@@ -118,7 +112,6 @@ export default {
                 Toast.fail(ret.msg)
                 return
             }
-            console.log('detail->', ret.data)
             // 展示单词详情页
             this.word_detail = ret.data
             if (ret.data.usspeech.length === 0) {
@@ -127,7 +120,9 @@ export default {
             } else {
                 this.audio.src = 'https://dict.youdao.com/dictvoice?audio=' + ret.data.usspeech
             }
+            this.word_url = 'https://youdao.com/result?word=' + this.word_detail.word + '&lang=en'
             await this.audio.play()
+            await this.get_vector_word()
         },
         async click_voice() {
             if (this.word_detail.usspeech.length === 0) {
@@ -155,9 +150,21 @@ export default {
     border-radius: 4px;
 }
 
-.fixed-bottom {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
+.block {
+  width: 80%;
+  height: 50vh;
+  background-color: #fff;
+  border-radius: 10px;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.van-overlay {
+  z-index: 8;
 }
 </style>
