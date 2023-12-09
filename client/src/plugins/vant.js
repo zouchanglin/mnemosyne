@@ -33,7 +33,8 @@ import {
     Step,
     Steps,
     Circle,
-    Overlay
+    Overlay,
+    Dialog
 } from 'vant'
 
 Vue.use(Button)
@@ -68,3 +69,4 @@ Vue.use(Step)
 Vue.use(Steps)
 Vue.use(Circle)
 Vue.use(Overlay)
+Vue.use(Dialog)

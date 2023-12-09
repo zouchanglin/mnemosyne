@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import './plugins/vant.js'
 import './plugins/md5.js'
+import 'vant/lib/index.css'
 
 import axios from 'axios'
 

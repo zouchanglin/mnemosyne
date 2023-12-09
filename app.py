@@ -1,8 +1,25 @@
-__import__('pysqlite3')
 import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
-import logging
 import os
+import time
+from datetime import datetime
+
+# 优先修复时区问题
+os.environ['TZ'] = 'Asia/Shanghai'
+time.tzset()
+print('当前时间--->', datetime.now())
+
+if sys.platform.startswith('linux'):
+    print("当前操作系统是Linux")
+    __import__('pysqlite3')
+    import sys
+
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+    import logging
+    import os
+elif sys.platform.startswith('darwin'):
+    print("当前操作系统是Mac")
+else:
+    print("当前操作系统不是Linux也不是Mac")
 
 from flask import render_template, request, g
 from flask_cors import CORS
@@ -65,6 +82,11 @@ def error_handler(e):
     """
     logging.exception(e)
     return UnityResponse.error(msg=str(e))
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return app.send_static_file('index.html')
 
 
 if __name__ == '__main__':
