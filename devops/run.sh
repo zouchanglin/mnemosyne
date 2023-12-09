@@ -11,5 +11,6 @@ source ./venv/bin/activate
 echo 'devops pip install!'
 pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple some-package
 
+source /etc/profile
 echo 'devops run!'
-python3 workflow.py
+nohup python3 workflow.py >> app.log
