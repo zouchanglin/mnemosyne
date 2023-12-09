@@ -93,7 +93,8 @@ export default {
             // 只搜索这一个
             const params = {
                 word_ids: [this.word_id],
-                search_limit: 15
+                search_limit: 6,
+                search_by_embeddings: true
             }
             const { data: ret } = await this.$http.post('/vector/search', params)
             if (ret.code !== 0) {

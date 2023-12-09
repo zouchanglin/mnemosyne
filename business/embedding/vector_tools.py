@@ -51,6 +51,7 @@ def search():
     use_embeddings_search = request.json.get('search_by_embeddings', True)
 
     if use_embeddings_search:
+        print('使用向量搜索')
         word_ids = [str(word_id) for word_id in word_ids]
         embeddings_results = collection.get(ids=word_ids, include=["embeddings"])
         results = collection.query(query_embeddings=embeddings_results['embeddings'], n_results=search_limit)
