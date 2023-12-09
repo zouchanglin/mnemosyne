@@ -6,11 +6,12 @@ if [ ! -d "venv" ]; then
 fi
 
 echo 'devops venv activate!'
+source /etc/profile
 source ./venv/bin/activate
 
 echo 'devops pip install!'
 pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple some-package
 
-source /etc/profile
+
 echo 'devops run!'
 nohup python3 workflow.py >> app.log
