@@ -10,7 +10,6 @@ config = configparser.ConfigParser()
 if not os.path.exists('workflow.ini'):
     config['DEFAULT'] = {
         'image_tag': '1.0.0',
-        'running_container_id': ''
     }
     with open('workflow.ini', 'w') as config_file:
         config.write(config_file)
@@ -78,14 +77,7 @@ def build():
     with open('workflow.ini', 'w') as config_f:
         config.write(config_f)
 
-    # 3、stop old docker
-    print('停止旧容器!')
-    old_container_id = config['DEFAULT']['running_container_id']
-    if old_container_id != '':
-        subprocess.run(["docker", "stop", old_container_id])
-        subprocess.run(["docker", "rm", old_container_id])
-
-    # 4、run new docker
+    # 3、run new docker
     print('docker-compose启动新容器!')
     # 把tag与环境变量写入docker-compose.yaml
     with open('./docker-compose.yaml.temp', 'r') as f:
