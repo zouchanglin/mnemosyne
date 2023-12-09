@@ -55,7 +55,7 @@ def get_new_tag(now_image_tag):
 def build():
     # print(request.json)
 
-    # print('Git提交信息:', request.json['commits'][0]['message'])
+    print('Git提交信息:', request.json['commits'][0]['message'])
 
     print("git push: trigger start build")
     # 1、git pull
