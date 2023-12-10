@@ -85,6 +85,8 @@ def build():
         content = content.replace('tag', new_image_tag)
         content = content.replace('openai_api_key', os.environ.get('OPENAI_API_KEY', ''))
         content = content.replace('mysql_url', os.environ.get('MYSQL_URL', ''))
+        content = content.replace('baidu_api_key', os.environ.get('BAIDU_API_KEY', ''))
+        content = content.replace('baidu_secret_key', os.environ.get('BAIDU_SECRET_KEY', ''))
         with open('./docker-compose.yaml', 'w') as wf:
             wf.write(content)
             print('docker-compose.yaml写入成功， 开始启动容器')
