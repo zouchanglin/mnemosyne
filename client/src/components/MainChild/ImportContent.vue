@@ -128,23 +128,39 @@ export default {
       Toast('文件大小不能超过 5M')
     },
     async afterRead(file) {
-      file.status = 'uploading'
-      file.message = '上传中...'
-
-      // console.log('file->', file.file)
       const formData = new FormData()
-      formData.append('file', file.file)
-
+      const files = file
+      let isMultiple = false
+      if (file instanceof Array && file.length) {
+        isMultiple = true
+        file.forEach((item, i) => {
+          formData.append('files[' + i + ']', item.file)
+          item.status = 'uploading'
+          item.message = '上传中...'
+          console.log(item)
+        })
+      }else {
+        formData.append('files[0]', file.file)
+        file.status = 'uploading'
+        file.message = '上传中...'
+      }
       const { data: ret } = await this.$http.post('/file/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       })
       if (ret.code === 0) {
-          file.status = 'done'
-          file.message = '上传成功'
-          Toast.success('上传成功')
-          this.fileNameList.push(ret.data.name)
+        Toast.success('上传成功')
+        if(isMultiple) {
+          files.forEach((item, i) => {
+            item.status = 'done'
+            item.message = '上传成功'
+          })
+        }else {
+          files.status = 'done'
+          files.message = '上传成功'
+        }
+        this.fileNameList = this.fileNameList.concat(ret.data.names)
       }else {
           file.status = 'failed'
           file.message = '上传失败'
