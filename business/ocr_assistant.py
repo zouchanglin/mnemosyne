@@ -6,6 +6,7 @@ from flask import Blueprint
 from flask import request
 import base64
 
+from business.embedding.vector_tools import vector_group_word
 from business.vo.word_vo import WordVO
 from database import db
 from run import app
@@ -54,6 +55,8 @@ def exec_start_ocr():
         for words_result in result_json["words_result"]:
             text = text + ',' + words_result["words"]
             word = words_result["words"]
+            # word先专为小写
+            word = word.lower()
             # 数据库查找word，存在就放在list里
             find = Word.query.filter_by(word=word).all()
             if len(find) > 0:
@@ -61,17 +64,24 @@ def exec_start_ocr():
     exist_words = [r.word for r in ret_exist_words]
     # 去重
     exist_words = list(set(exist_words))
+    need_vector_words = []
+
     ai_result = analyse_ocr(text)
     for word in ai_result:
         if word in exist_words:
             continue
         else:
             word = get_mission_new_word(word)
-            print('获得新单词成功！word->', word)
-            ret_exist_words.append(word)
+            if word is not None:
+                need_vector_words.append(word)
+                print('获得新单词成功！word->', word)
+                ret_exist_words.append(word)
 
-    for w in ret_exist_words:
-        print(w)
+    # 生成向量
+    if len(need_vector_words) > 0:
+        vector_group_word(need_vector_words)
+        print('新单词向量化完成')
+
     return UnityResponse.success(data={
         'words': [WordVO.word_2_vo(r) for r in ret_exist_words],
     })
@@ -142,6 +152,7 @@ def analyse_ocr(ocr_text: str):
     分析OCR结果
     :return:
     """
+    ocr_text = ocr_text.lower()
     prompt = f'''帮我分析这段OCR数据，提取其中的英文单词:
     {ocr_text}
     仅仅给我返回标准JSON格式的单词数组即可，比如:["hello","word"]'''
@@ -161,7 +172,8 @@ def analyse_ocr(ocr_text: str):
         return []
 
 
-def get_mission_new_word(word_txt):
+def get_mission_new_word(word_txt: str):
+    word_txt = word_txt.lower()
     url = f'https://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&q=\
     {word_txt}&dicts=%7B%22count%22%3A99%2C%22dicts%22%3A%5B%5B%22ec%22%5D%5D%7D'
     response = requests.get(url)
@@ -177,7 +189,7 @@ def get_mission_new_word(word_txt):
             word.type_line = '10000'
             db.session.add(word)
             db.session.commit()
-            print('添加新单词成功', word.word)
+            # print('添加新单词成功', word.word)
             return word
         except Exception as e:
             print(e)

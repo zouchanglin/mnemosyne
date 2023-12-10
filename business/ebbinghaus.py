@@ -44,3 +44,13 @@ def study_word():
     current_app.logger.info('user_id =%s', user_id)
     words = get_today_study_words(user_id=user_id)
     return UnityResponse.success(msg='操作成功', data=words)
+
+
+@Ebbinghaus.route('/import', methods=['POST'])
+def import_words():
+    user_id = g.user_id
+    current_app.logger.info('user_id =%s', user_id)
+    word_ids = request.json['word_ids']
+    for word_id in word_ids:
+        learned_or_forget_word_once(word_id, user_id, True)
+    return UnityResponse.success(msg='操作成功')

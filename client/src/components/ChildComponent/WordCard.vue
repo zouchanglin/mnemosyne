@@ -13,15 +13,15 @@
                 <van-icon name="close" size="30" @click="show = false" style="margin-right: 10px; margin-top: 10px"/>
               </van-col>
             </van-row>
-            <van-row style="text-align: center; margin-top: 10px; margin-left: 10px; margin-right: 10px">
-              <span style="font-size: 14px; color: #505050;">{{ word_detail.trans }}</span>
+            <van-row style="text-align: center; margin-top: 10px; margin-left: 10px; margin-right: 10px;">
+              <span style="font-size: 14px; color: #505050; overflow: hidden; text-overflow: ellipsis">{{ this.truncatedText(word_detail.trans) }}</span>
               <van-divider />
             </van-row>
             <van-row>
               <van-tabs v-model="activeName" ref="tabs">
                 <van-tab title="语意关联词" name="word">
                   <van-list
-                      style="overflow: auto; height: 30vh; padding-left: 30px"
+                      style="overflow: auto; height: 30vh; margin-left: 10px; margin-right: 10px"
                       v-model="loading"
                       :finished="finished"
                       finished-text="没有更多了"
@@ -133,6 +133,12 @@ export default {
                 this.audio.src = 'https://dict.youdao.com/dictvoice?audio=' + this.word_detail.usspeech
             }
             await this.audio.play()
+        },
+        truncatedText(text, maxLength = 16) {
+          if (text.length > maxLength) {
+            return text.substring(0, maxLength) + '...'
+          }
+          return text
         }
     },
     props: {

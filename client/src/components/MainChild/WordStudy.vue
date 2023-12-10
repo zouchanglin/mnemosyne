@@ -10,7 +10,7 @@
         @click-left="onClickLeft"
         >
       <template #title>
-        <span>WordStudy</span>
+        <span>学习新单词</span>
       </template>
     </van-nav-bar>
     <van-row style="margin-top: 50px" v-if="loading">

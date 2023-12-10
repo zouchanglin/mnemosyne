@@ -23,19 +23,7 @@ def init():
         paginate = Word.query.paginate(page=page, per_page=page_size)
         # 每页的数据
         words = paginate.items
-
-        metadatas = []
-        ids = [str(word.id) for word in words]
-        documents = [(word.word + " " + word.trans_cn) for word in words]
-        for word in words:
-            metadatas.append({
-                "id": word.id,
-                "word": word.word,
-                "trans": word.trans_cn
-            })
-        collection.add(
-            metadatas=metadatas, documents=documents, ids=ids
-        )
+        vector_group_word(words)
         current_app.logger.info('成功添加1页单词, page = ', page)
     return UnityResponse.success(msg='操作成功')
 
@@ -51,7 +39,7 @@ def search():
     use_embeddings_search = request.json.get('search_by_embeddings', True)
 
     if use_embeddings_search:
-        print('使用向量搜索')
+        # print('使用向量搜索')
         word_ids = [str(word_id) for word_id in word_ids]
         embeddings_results = collection.get(ids=word_ids, include=["embeddings"])
         results = collection.query(query_embeddings=embeddings_results['embeddings'], n_results=search_limit)
@@ -71,3 +59,18 @@ def search():
     for ret in results['metadatas']:
         final_ret.extend(ret)
     return UnityResponse.success(msg='查询成功', data=final_ret)
+
+
+def vector_group_word(words):
+    metadatas = []
+    ids = [str(word.id) for word in words]
+    documents = [(word.word + " " + word.trans_cn) for word in words]
+    for word in words:
+        metadatas.append({
+            "id": word.id,
+            "word": word.word,
+            "trans": word.trans_cn
+        })
+    collection.add(
+        metadatas=metadatas, documents=documents, ids=ids
+    )

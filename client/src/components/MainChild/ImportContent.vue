@@ -18,32 +18,44 @@
     </van-notice-bar>
     <van-row>
       <van-form @submit="startOCRWord">
-        <van-field name="uploader" label="文件上传">
+        <van-field name="uploader" label="照片/截图">
           <template #input>
-            <van-uploader v-model="fileList" multiple :max-count="5"
+            <van-uploader v-model="fileList" multiple :max-count="6"
                           :max-size="5000 * 1024" @oversize="onOversize"
                           :after-read="afterRead"/>
           </template>
         </van-field>
         <div style="margin: 16px;">
-          <van-button round block :loading="buttonLoading" :disabled="fileNameList.length <= 0" type="info" native-type="submit">开始导入</van-button>
+          <van-button round block :loading="buttonLoading" :disabled="fileNameList.length <= 0" type="info" native-type="submit">开始上传</van-button>
         </div>
       </van-form>
     </van-row>
     <van-row>
       <van-list
           v-if="ocr_words.length > 0"
-          style="overflow: auto; height: 60vh; padding-left: 30px"
+          style="overflow: auto; height: 60vh;"
           v-model="loading"
           :finished="finished"
           finished-text="没有更多了"
       >
-        <van-cell v-for="w in ocr_words" :key="w.id" :title="w.word" :label="w.trans" @click="click_word(w.id)"/>
+        <van-row v-for="w in ocr_words" :key="w.id">
+          <van-col span="20">
+            <van-cell :title="w.word" :label="truncatedText(w.trans)" @click="click_word(w.id)"/>
+          </van-col>
+          <van-col span="4">
+            <van-button icon="close" block @click="deleteWord(w.id)"></van-button>
+          </van-col>
+        </van-row>
       </van-list>
     </van-row>
 
     <word-card :word_id="word_id" @close_word_card="word_id=-1">
     </word-card>
+
+    <!-- 底部固定按钮 -->
+    <van-sticky offset-top="92vh" v-if="ocr_words.length > 0">
+      <van-button type="info" native-type="submit" icon="down" block size="large" @click="importWords">确认导入已学习</van-button>
+    </van-sticky>
   </div>
 </template>
 <script>
@@ -74,6 +86,20 @@ export default {
   methods: {
     click_word(id) {
       this.word_id = id
+    },
+    async importWords(){
+      const params = {
+        word_ids: this.ocr_words.map(w => w.id)
+      }
+      const { data: ret } = await this.$http.post('/ebbinghaus/import', params)
+      if (ret.code !== 0) {
+        Notify('导入失败，请联系管理员处理!')
+      }else{
+        Toast.success('导入成功')
+        console.log('ret.data--->', ret.data)
+        await this.$router.push('/ai-reading')
+        console.log('跳转到AI阅读')
+      }
     },
     async startOCRWord() {
       console.log('StartOcr')
@@ -124,6 +150,16 @@ export default {
           file.status = 'failed'
           file.message = '上传失败'
       }
+    },
+    truncatedText(text, maxLength = 16) {
+      if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...'
+      }
+      return text
+    },
+    deleteWord(id) {
+      console.log('deleteWord', id)
+      this.ocr_words = this.ocr_words.filter(w => w.id !== id)
     }
   }
 }

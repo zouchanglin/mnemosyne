@@ -10,7 +10,7 @@
         @click-left="onClickLeft"
         >
       <template #title>
-        <span>WordRevise</span>
+        <span>单词复习</span>
       </template>
     </van-nav-bar>
     <van-row style="margin-top: 50px">
