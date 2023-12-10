@@ -26,7 +26,8 @@
           </template>
         </van-field>
         <div style="margin: 16px;">
-          <van-button round block :loading="buttonLoading" :disabled="fileNameList.length <= 0" type="info" native-type="submit">开始上传</van-button>
+          <van-button round block :loading="buttonLoading" :disabled="fileNameList.length <= 0"
+                      v-if="ocr_words.length === 0 " type="info" native-type="submit">开始上传</van-button>
         </div>
       </van-form>
     </van-row>
@@ -53,9 +54,8 @@
     </word-card>
 
     <!-- 底部固定按钮 -->
-    <van-sticky offset-top="92vh" v-if="ocr_words.length > 0">
-      <van-button type="info" native-type="submit" icon="down" block size="large" @click="importWords">确认导入已学习</van-button>
-    </van-sticky>
+    <van-button class="fixed-bottom" v-if="ocr_words.length > 0" type="info" native-type="submit" icon="down"
+               round @click="importWords">确认导入已学习</van-button>
   </div>
 </template>
 <script>
@@ -70,7 +70,6 @@ export default {
       loading: false,
       finished: false,
       word_id: 0,
-      word_card_show: false,
       audio: new Audio(),
       ocr_words: [],
       fileList: [
@@ -168,7 +167,7 @@ export default {
 .fixed-bottom {
   position: fixed;
   bottom: 0;
-  width: 100%;
-  margin-bottom: 80px;
+  width: 95%;
+  margin-bottom: 10px;
 }
 </style>
