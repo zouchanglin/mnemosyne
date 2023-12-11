@@ -62,8 +62,13 @@ class Word(Base):
                                    default=datetime.now(pytz.timezone('Asia/Shanghai')),
                                    onupdate=datetime.now(pytz.timezone('Asia/Shanghai')), comment='更新时间')
 
-    def __repr__(self):
-        return f"<Word id={self.id} word={self.word}>"
+    # hash
+    def __hash__(self):
+        return hash(self.word)
+
+    def __eq__(self, other):
+        return self.word == other.word
+
 
 
 @dataclass

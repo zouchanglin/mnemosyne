@@ -46,4 +46,8 @@ class WordDetail:
                 ret_vo.tags.append('考研')
         else:
             ret_vo.tags = [w.type]
+
+        if ret_vo.usspeech == '':
+            ret_vo.usspeech = ret_vo.word + '&type=2'
+
         return ret_vo

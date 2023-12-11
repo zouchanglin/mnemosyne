@@ -6,6 +6,8 @@ from flask import Blueprint
 from flask import request
 import base64
 
+from openai.types.chat.completion_create_params import ResponseFormat
+
 from business.embedding.vector_tools import vector_group_word
 from business.vo.word_vo import WordVO
 from database import db
@@ -60,7 +62,10 @@ def exec_start_ocr():
             # 数据库查找word，存在就放在list里
             find = Word.query.filter_by(word=word).all()
             if len(find) > 0:
-                ret_exist_words.append(find[0])
+                # ret_exist_words没有再添加
+                # ret_exist_words.append(find[0])
+                ret_exist_words.extend(find)
+    ret_exist_words = list(set(ret_exist_words))
     exist_words = [r.word for r in ret_exist_words]
     # 去重
     exist_words = list(set(exist_words))
@@ -159,10 +164,11 @@ def analyse_ocr(ocr_text: str):
 
     messages = [{"role": "system", "content": prompt}]
     completion = client.chat.completions.create(
-        # model="gpt-4-1106-preview",
+        # https://platform.openai.com/docs/guides/text-generation/json-mode 详细说明
         model="gpt-3.5-turbo-1106",
         messages=messages,
         temperature=0.0,
+        response_format={"type": "json_object"},
     )
 
     try:

@@ -35,12 +35,73 @@ export default {
   created() {
     this.audio.autoplay = true
   },
+  mounted() {
+    this.startReading()
+  },
   methods: {
+    startReading() {
+      const baseUrl = process.env.VUE_APP_API_URL + 'article/generate'
+      const eventFetch = new FetchEventSource()
+      eventFetch.stopFetchEvent()
+      eventFetch.startFetchEvent(baseUrl, {}, res => {
+        console.log(res, 'res')
+      }, () => {
+        console.log('end')
+      }, error => {
+        console.log(error, 'error')
+      })
+    },
     onClickLeft() {
       this.$router.push('/home')
     }
   }
 }
+
+/**
+ * FetchEventSource 合并Post请求与Stream响应
+ */
+class FetchEventSource {
+  constructor() {
+    this.abortController = new AbortController() || null
+  }
+
+  startFetchEvent(url, body, onMessage, onEnd, onError, headers = {}) {
+    const fetchOptions = {
+      method: 'POST',
+      body: body,
+      headers: Object.assign({}, {
+        'Content-Type': 'application/json',
+        Authorization: localStorage.getItem('token')
+      }),
+      signal: this.abortController.signal
+    }
+    fetch(url, fetchOptions).then((response) => {
+      const reader = response.body.getReader()
+      reader.read().then(function processResult(result) {
+        if (result.done) {
+          onEnd()
+          return
+        }
+        const decoder = new TextDecoder()
+        const receivedString = decoder.decode(result.value, { stream: true })
+        onMessage(receivedString)
+        return reader.read().then(processResult)
+      })
+      return response
+    }).catch(() => {
+      this.eventController.abort()
+      onError({ code: 201, message: '服务器异常' })
+    })
+  }
+
+  stopFetchEvent() {
+    if (this.eventController) {
+      this.eventController.abort()
+      this.eventController = null
+    }
+  }
+}
+
 </script>
 <style scoped>
 .fixed-bottom {
