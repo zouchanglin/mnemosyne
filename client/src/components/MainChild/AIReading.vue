@@ -19,8 +19,8 @@
   </div>
 </template>
 <script>
-import { Toast } from 'vant'
 import WordCard from '@/components/ChildComponent/WordCard.vue'
+
 export default {
   name: 'AIReading',
   components: { WordCard },
@@ -42,14 +42,41 @@ export default {
     startReading() {
       const baseUrl = process.env.VUE_APP_API_URL + 'article/generate'
       const eventFetch = new FetchEventSource()
+      const overItems = []
       eventFetch.stopFetchEvent()
       eventFetch.startFetchEvent(baseUrl, {}, res => {
-        console.log(res, 'res')
+        // console.log(res, typeof res)  string
+        const items = this.decodeSSEString(res)
+
       }, () => {
         console.log('end')
       }, error => {
         console.log(error, 'error')
       })
+    },
+    decodeSSEString(sseString){
+      // kv list
+      const tmpItems = []
+      const sseArray = sseString.split('\n')
+      let eventV
+      let dataV
+      sseArray.forEach(function (line) {
+        if(line.length > 0){
+          console.log('line--->', line)
+          const [key, value] = line.split(':')
+          console.log(key, value)
+          if(key.trim() === 'event') {
+            eventV = value.trim()
+          } else if(key.trim() === 'data') {
+            dataV = value.trim()
+          }
+          if(eventV && dataV) {
+            tmpItems.push({ event: eventV, data: dataV })
+            eventV = dataV = null
+          }
+        }
+      })
+      return tmpItems
     },
     onClickLeft() {
       this.$router.push('/home')
