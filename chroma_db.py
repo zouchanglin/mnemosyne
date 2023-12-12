@@ -1,4 +1,7 @@
 # import os
+import os
+
+from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
 
 # from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
 from business.utils.openai_client import client as openai_client
@@ -11,8 +14,8 @@ import chromadb
 client = chromadb.PersistentClient(path='chromadb')
 
 
-# embedding_function = OpenAIEmbeddingFunction(api_key=os.environ.get('OPENAI_API_KEY'),
-#                                              api_base='https://api.openai-proxy.com/v1')
+embedding_function = OpenAIEmbeddingFunction(api_key=os.environ.get('OPENAI_API_KEY'),
+                                             api_base='https://api.openai-proxy.com/v1')
 
 def get_embedding(texts, model="text-embedding-ada-002"):
     # old code
@@ -34,4 +37,4 @@ def get_embedding(texts, model="text-embedding-ada-002"):
     return [result.embedding for result in sorted_embeddings]
 
 
-collection = client.get_or_create_collection("word_collection", embedding_function=get_embedding)
+collection = client.get_or_create_collection("word_collection", embedding_function=embedding_function)
