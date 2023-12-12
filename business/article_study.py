@@ -52,7 +52,7 @@ def generate():
     # 创建一个全局队列
     data_queue = Queue()
 
-    def put_content():
+    def put_char():
         while True:
             item = data_queue.get(block=True)  # 阻塞等待队列
             if item is None:
@@ -60,7 +60,7 @@ def generate():
             yield f'event: {item.event}\ndata: {item.data}\n\n'
 
     threading.Thread(target=start_generate).start()
-    return Response(stream_with_context(put_content()), mimetype="text/event-stream", content_type='text/event-stream')
+    return Response(stream_with_context(put_char()), mimetype="text/event-stream", content_type='text/event-stream')
 
 
 class Msg:
