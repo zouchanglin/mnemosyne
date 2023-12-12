@@ -48,7 +48,7 @@ def generate():
                 ch = chunk.choices[0].delta.content
                 print(ch, end="")
                 data_queue.put(Msg('ch', ch))
-        data_queue.put(Msg('base', 'over'))
+        data_queue.put(Msg('over', ''))
 
     # 创建一个全局队列
     data_queue = Queue()

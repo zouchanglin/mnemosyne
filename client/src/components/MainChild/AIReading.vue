@@ -14,6 +14,9 @@
       </template>
     </van-nav-bar>
 
+<!--    <span>{{ chContent }}</span>-->
+    <div class="container" v-html="chContentSpan"></div>
+
     <word-card :word_id="word_id" @close_word_card="word_id=-1">
     </word-card>
   </div>
@@ -27,7 +30,9 @@ export default {
   data() {
     return {
       word_id: 0,
-      audio: new Audio()
+      audio: new Audio(),
+      chContent: 'The philosophy of life is to find meaning in every substantial moment, but sometimes anxiety can stir in the chamber of our minds, making concentration difficult. There is controversy over what should constitute a true alliance, and some may pant for an incentive to join. However, any assault on our reservation can violate our trust and portray an ally in a negative light. It\'s important to incorporate good tactics and gear up for any word or penalty that may come our way. Just like a priest in battle, we must be ready to defend our beliefs and stand firm in our convictions.',
+      chContentSpan: this.addElementSpan(this.chContent)
     }
   },
   setup() {
@@ -36,47 +41,93 @@ export default {
     this.audio.autoplay = true
   },
   mounted() {
-    this.startReading()
+    // this.startReading()
   },
   methods: {
     startReading() {
       const baseUrl = process.env.VUE_APP_API_URL + 'article/generate'
       const eventFetch = new FetchEventSource()
-      const overItems = []
+      // this.chContent = ''
       eventFetch.stopFetchEvent()
       eventFetch.startFetchEvent(baseUrl, {}, res => {
-        // console.log(res, typeof res)  string
-        const items = this.decodeSSEString(res)
-
+        this.decodeSSEString(res, eventFetch, this.chContent)
       }, () => {
         console.log('end')
       }, error => {
         console.log(error, 'error')
       })
     },
-    decodeSSEString(sseString){
-      // kv list
-      const tmpItems = []
+    decodeSSEString(sseString, eventFetch){
       const sseArray = sseString.split('\n')
       let eventV
       let dataV
-      sseArray.forEach(function (line) {
+      sseArray.forEach((line) => {
         if(line.length > 0){
-          console.log('line--->', line)
           const [key, value] = line.split(':')
-          console.log(key, value)
+          // console.log('KV->' + key + ':' + value)
           if(key.trim() === 'event') {
-            eventV = value.trim()
+            if (value === 'over') {
+              eventFetch.stopFetchEvent()
+              eventV = dataV = null
+              console.log(this.chContent)
+              return
+            }
+            eventV = value
           } else if(key.trim() === 'data') {
-            dataV = value.trim()
+            dataV = value
           }
-          if(eventV && dataV) {
-            tmpItems.push({ event: eventV, data: dataV })
+          if(eventV !== null && dataV != null) {
+            // dataV减去最前面的一个空格
+            this.chContent += dataV.substring(1)
             eventV = dataV = null
           }
         }
       })
-      return tmpItems
+    },
+    addElementSpan(str) {
+      return str
+          .split(' ')
+          .map((item) => {
+            const { start, word, end } = this.getWord(item)
+            return `${start}<span>${word}</span>${end} `
+          })
+          .join('')
+    },
+    getWord(str) {
+      let word = ''
+      let start = ''
+      let end = ''
+      let j = str.length - 1
+      let i = 0
+
+      while (i < str.length) {
+        if (/^[a-zA-Z]$/.test(str[i])) {
+          break
+        }
+        start = start + str[i]
+        i += 1
+      }
+
+      while (j >= 0) {
+        if (/^[a-zA-Z]$/.test(str[j])) {
+          break
+        }
+        end = str[j] + end
+        j -= 1
+      }
+
+      word = str.slice(i, j + 1)
+
+      // 处理数字
+      if (!word && start === end) {
+        start = ''
+      }
+
+      return {
+        start,
+        word,
+        end
+      }
     },
     onClickLeft() {
       this.$router.push('/home')
