@@ -14,8 +14,7 @@
       </template>
     </van-nav-bar>
 
-<!--    <span>{{ chContent }}</span>-->
-    <div class="container" v-html="chContentSpan"></div>
+    <div class="container" @click="clickWord($event)" v-html="chContentSpan"></div>
 
     <word-card :word_id="word_id" @close_word_card="word_id=-1">
     </word-card>
@@ -32,7 +31,7 @@ export default {
       word_id: 0,
       audio: new Audio(),
       chContent: 'The philosophy of life is to find meaning in every substantial moment, but sometimes anxiety can stir in the chamber of our minds, making concentration difficult. There is controversy over what should constitute a true alliance, and some may pant for an incentive to join. However, any assault on our reservation can violate our trust and portray an ally in a negative light. It\'s important to incorporate good tactics and gear up for any word or penalty that may come our way. Just like a priest in battle, we must be ready to defend our beliefs and stand firm in our convictions.',
-      chContentSpan: this.addElementSpan(this.chContent)
+      chContentSpan: 'AAA'
     }
   },
   setup() {
@@ -42,8 +41,15 @@ export default {
   },
   mounted() {
     // this.startReading()
+    this.chContentSpan = this.addElementSpan(this.chContent)
+    console.log(this.chContentSpan)
   },
   methods: {
+    clickWord(event) {
+      if(event.target.innerText.length < 50){
+        console.log(event.target.innerText)
+      }
+    },
     startReading() {
       const baseUrl = process.env.VUE_APP_API_URL + 'article/generate'
       const eventFetch = new FetchEventSource()
@@ -188,4 +194,11 @@ class FetchEventSource {
   width: 100%;
   margin-bottom: 80px;
 }
+
+.container {
+  font-size: 20px;
+  padding: 10px;
+  line-height: 2.5;
+}
+
 </style>
