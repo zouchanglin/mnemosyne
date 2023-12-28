@@ -18,6 +18,19 @@ axios.interceptors.request.use(config => {
     return config
 })
 
+axios.interceptors.response.use(res => {
+    console.log('Response received:', res.data)
+    if (res.data.code === -2) {
+        router.push('/login').then(r => {
+            console.log('跳转到登录页')
+        })
+    }else {
+        return res
+    }
+}, err => {
+    console.log('err:', err)
+})
+
 if (process.env.NODE_ENV === 'production') {
     console.log('部署环境')
 } else if(process.env.NODE_ENV === 'development') {

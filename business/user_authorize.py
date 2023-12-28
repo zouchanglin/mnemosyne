@@ -1,6 +1,7 @@
 from flask import Blueprint, request, current_app
 
 from business.models import User, UserProfile
+from run import app
 from unity_response import UnityResponse
 from database import db
 
@@ -14,12 +15,12 @@ def login():
     """
     email = request.json['email']
     password = request.json['password']
-    current_app.logger.info(email, password)
+    app.logger.info('email = %s, password = %s', email, password)
     user = User.query.filter_by(email=email, password=password).first()
     if user:
         return UnityResponse.success(data={
-            "user_name": user.username,
-            "user_email": user.email,
+            "nickname": user.nickname,
+            "email": user.email,
             "token": user.id,
         })
     else:
@@ -37,7 +38,7 @@ def register():
     if user:
         return UnityResponse.error(msg='邮箱已存在')
     else:
-        user = User(username=email, password=password, email=email)
+        user = User(nickname=email, password=password, email=email)
         db.session.add(user)
         db.session.commit()
 
@@ -45,6 +46,6 @@ def register():
         db.session.add(UserProfile(user_id=user.id))
         db.session.commit()
         return UnityResponse.success(data={
-            "user_name": user.username,
+            "nick_name": user.nickname,
             "token": user.id,
         })

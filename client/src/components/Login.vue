@@ -1,33 +1,30 @@
 <template>
   <!-- 页面局中 -->
-
-  <van-form @submit="login" class="login-box" v-model="loginForm">
-    <van-cell-group inset>
-      <van-field
-          v-model="loginForm.email"
-          name="email"
-          label="Email"
-          placeholder="E-Mail"
-          type="email"
-          :rules="[{ required: true, message: '请填写E-Mail' },
-          {}]"
-      />
-      <van-field
-          v-model="loginForm.password"
-          type="password"
-          name="密码"
-          label="密码"
-          placeholder="密码"
-          :rules="[{ required: true, message: '请填写密码' }]"
-      />
-    </van-cell-group>
-    <div style="margin: 16px;">
+  <div class="fullscreen-container">
+    <van-form @submit="login" v-model="loginForm" style="width: 90%">
+        <van-field
+            v-model="loginForm.email"
+            name="email"
+            label="Email"
+            placeholder="E-Mail"
+            type="email"
+            :rules="[{ required: true, message: '请填写E-Mail' }]"
+        />
+        <van-field
+            v-model="loginForm.password"
+            type="password"
+            name="Password"
+            label="Password"
+            placeholder="密码"
+            :rules="[{ required: true, message: '请填写密码' }]"
+        />
       <van-button round block type="primary" native-type="submit">
         提交
       </van-button>
       <van-button round block type="default" style="margin-top: 10px" @click="restLoginForm">重置</van-button>
-    </div>
-  </van-form>
+    </van-form>
+  </div>
+
 </template>
 
 <script>
@@ -53,15 +50,14 @@ export default {
       const { data: ret } = await this.$http.post('/auth/login', params)
       console.log('login -> ret', ret)
       if (ret.code !== 0) {
-        Notify('登录失败，请检查用户名和密码')
-        // Toast.fail('用户名和密码错误')
+        // Notify('登录失败，请检查用户名和密码')
+        Toast.fail('登录失败')
         return
       }
       Toast.success('登录成功')
-      // Notify('登录成功')
       window.localStorage.setItem('token', ret.data.token)
-      window.localStorage.setItem('user_name', ret.data.user_name)
-      window.localStorage.setItem('user_email', ret.data.user_email)
+      window.localStorage.setItem('email', ret.data.email)
+      window.localStorage.setItem('nickname', ret.data.nickname)
       await this.$router.push('/home')
     },
     restLoginForm() {
@@ -74,8 +70,16 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.login-box {
-  align-self: center;
-  margin-top: 80px;
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.fullscreen-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 </style>

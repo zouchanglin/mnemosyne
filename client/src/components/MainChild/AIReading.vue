@@ -16,7 +16,7 @@
 
     <div class="container" @click="clickWord($event)" v-html="chContentSpan"></div>
 
-    <word-card :word_id="word_id" @close_word_card="word_id=-1">
+    <word-card :word="word_txt" @close_word_card="word_txt=''">
     </word-card>
   </div>
 </template>
@@ -28,7 +28,7 @@ export default {
   components: { WordCard },
   data() {
     return {
-      word_id: 0,
+      word_txt: '',
       audio: new Audio(),
       chContent: 'The philosophy of life is to find meaning in every substantial moment, but sometimes anxiety can stir in the chamber of our minds, making concentration difficult. There is controversy over what should constitute a true alliance, and some may pant for an incentive to join. However, any assault on our reservation can violate our trust and portray an ally in a negative light. It\'s important to incorporate good tactics and gear up for any word or penalty that may come our way. Just like a priest in battle, we must be ready to defend our beliefs and stand firm in our convictions.',
       chContentSpan: 'AAA'
@@ -48,6 +48,7 @@ export default {
     clickWord(event) {
       if(event.target.innerText.length < 50){
         console.log(event.target.innerText)
+        this.word_txt = event.target.innerText
       }
     },
     startReading() {

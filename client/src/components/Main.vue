@@ -9,7 +9,7 @@
       <van-grid-item icon="down" text="导入单词" to="/import-content"/>
     </van-grid>
     <van-cell-group inset>
-      <van-cell title="今日待复习" value="72个单词"/>
+      <van-cell title="今日待复习" value="0个单词"/>
     </van-cell-group>
     <van-row>
       <van-col span="24" style="text-align: center">

@@ -37,8 +37,8 @@
         </van-swipe-cell>
       </van-list>
     </van-row>
-    <word-card :word_id="word_id" @close_word_card="word_id=-1">
-    </word-card>
+<!--    <word-card :word_id="word_id" @close_word_card="word_id=-1">-->
+<!--    </word-card>-->
   </div>
 </template>
 <script>

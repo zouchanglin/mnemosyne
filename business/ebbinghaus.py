@@ -5,7 +5,6 @@ from business.services.ebbinghaus_service import (
     get_now_need_revise_words
 )
 
-from business.services.word_study_service import get_today_study_words
 
 from unity_response import UnityResponse
 
@@ -34,18 +33,6 @@ def revise_word():
     return UnityResponse.success(msg='操作成功', data=words)
 
 
-@Ebbinghaus.route('/study', methods=['POST'])
-def study_word():
-    """
-    学习新单词
-    :return:
-    """
-    user_id = g.user_id
-    current_app.logger.info('user_id =%s', user_id)
-    words = get_today_study_words(user_id=user_id)
-    return UnityResponse.success(msg='操作成功', data=words)
-
-
 @Ebbinghaus.route('/import', methods=['POST'])
 def import_words():
     user_id = g.user_id
@@ -54,5 +41,3 @@ def import_words():
     for word_id in word_ids:
         learned_or_forget_word_once(word_id, user_id, True)
     return UnityResponse.success(msg='操作成功')
-
-

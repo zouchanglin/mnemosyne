@@ -13,16 +13,16 @@ export default {
 
   },
   mounted() {
-    Dialog.confirm({
-      title: '全屏模式',
-      message: '是否需要进入全屏沉浸式体验?'
-    })
-        .then(() => {
-          this.allScreen()
-        })
-        .catch(() => {
-          // on cancel
-        })
+    // Dialog.confirm({
+    //   title: '全屏模式',
+    //   message: '是否需要进入全屏沉浸式体验?'
+    // })
+    //     .then(() => {
+    //       this.allScreen()
+    //     })
+    //     .catch(() => {
+    //       // on cancel
+    //     })
   },
   methods: {
     allScreen() {

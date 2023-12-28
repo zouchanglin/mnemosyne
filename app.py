@@ -1,26 +1,6 @@
-import sys
 import os
 import time
 from datetime import datetime
-
-# 优先修复时区问题
-os.environ['TZ'] = 'Asia/Shanghai'
-time.tzset()
-print('当前时间--->', datetime.now())
-
-if sys.platform.startswith('linux'):
-    print("当前操作系统是Linux")
-    __import__('pysqlite3')
-    import sys
-
-    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
-    import logging
-    import os
-elif sys.platform.startswith('darwin'):
-    print("当前操作系统是Mac")
-else:
-    print("当前操作系统不是Linux也不是Mac")
-
 from flask import render_template, request, g
 from flask_cors import CORS
 
@@ -29,6 +9,11 @@ from run import app
 from unity_response import UnityResponse
 from database import db
 from business.models import Base, User
+
+# 优先修复时区问题
+os.environ['TZ'] = 'Asia/Shanghai'
+time.tzset()
+print('当前时间--->', datetime.now())
 
 # 添加日志配置
 logHandler = log_handler.get_log_handler()
@@ -67,14 +52,15 @@ def auth_token():
         try:
             find_ret = User.query.filter_by(id=request.headers.get('Authorization')).first()
             if find_ret is None:
-                return UnityResponse.error(msg='无效token', code=-1)
+                # 返回一个token过期的错误，前端会自动跳转到登录页面
+                return UnityResponse.error(msg='token-overdue', code=-2)
             else:
                 # token有效的情况
                 g.user_id = find_ret.id
                 # setattr(g, 'user_id', find_ret.id)
         except Exception as e:
             app.logger.info(e)
-            return UnityResponse.error(msg='token获取失败', code=-1)
+            return UnityResponse.error(msg='token获取失败', code=-2)
 
 
 @app.errorhandler(Exception)
@@ -103,7 +89,6 @@ if __name__ == '__main__':
     from business.ebbinghaus import Ebbinghaus
     from business.file_manager import FileManager
     from business.log.log_sse import LogSSE
-    from business.log.ping_sse import PingSSE
     from business.ocr_assistant import OCRAssistant
 
     app.register_blueprint(Authorize)
@@ -113,6 +98,5 @@ if __name__ == '__main__':
     app.register_blueprint(Ebbinghaus)
     app.register_blueprint(FileManager)
     app.register_blueprint(LogSSE)
-    app.register_blueprint(PingSSE)
     app.register_blueprint(OCRAssistant)
     app.run(host='0.0.0.0', port=5005, debug=False)

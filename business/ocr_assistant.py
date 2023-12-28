@@ -1,16 +1,11 @@
 import json
 import os
 
-import requests
 from flask import Blueprint
 from flask import request
 import base64
 
-from openai.types.chat.completion_create_params import ResponseFormat
-
-from business.embedding.vector_tools import vector_group_word
-from business.vo.word_vo import WordVO
-from database import db
+from business.collect_word import get_word
 from run import app
 from unity_response import UnityResponse
 from urllib.request import urlopen
@@ -20,7 +15,6 @@ from urllib.parse import urlencode
 
 from business.models import Word
 from business.utils.openai_client import client
-
 
 API_KEY = os.environ.get("BAIDU_API_KEY")
 SECRET_KEY = os.environ.get("BAIDU_SECRET_KEY")
@@ -45,7 +39,7 @@ def exec_start_ocr():
     image_url = OCR_URL + "?access_token=" + token
 
     text = ""
-    ret_exist_words = []
+    ret_words: list[Word] = []
     for name in file_names:
         # 读取测试图片
         file_content = read_file(OCR_PATH + name)
@@ -60,44 +54,20 @@ def exec_start_ocr():
             # word先专为小写
             word = word.lower()
             # 数据库查找word，存在就放在list里
-            find = Word.query.filter_by(word=word).all()
-            if len(find) > 0:
-                # ret_exist_words没有再添加
-                # ret_exist_words.append(find[0])
-                ret_exist_words.extend(find)
-    ret_exist_words = list(set(ret_exist_words))
-    exist_words = [r.word for r in ret_exist_words]
-    # 去重
-    exist_words = list(set(exist_words))
-    need_vector_words = []
-
-    ai_result = analyse_ocr(text)
-    for word in ai_result:
-        if word in exist_words:
-            continue
-        else:
-            word = get_mission_new_word(word)
-            if word is not None:
-                need_vector_words.append(word)
-                print('获得新单词成功！word->', word)
-                ret_exist_words.append(word)
-
-    # 生成向量
-    if len(need_vector_words) > 0:
-        vector_group_word(need_vector_words)
-        print('新单词向量化完成')
-
+            ret_words.append(get_word(word))
+    # 对ret_words进行去重
+    ret_words = list(set(ret_words))
+    # 去掉null元素
+    ret_words = list(filter(lambda x: x is not None, ret_words))
     return UnityResponse.success(data={
-        'words': [WordVO.word_2_vo(r) for r in ret_exist_words],
+        'words': ret_words,
     })
 
 
-"""
-    获取token
-"""
-
-
 def fetch_token():
+    """
+    获取token
+    """
     params = {'grant_type': 'client_credentials',
               'client_id': API_KEY,
               'client_secret': SECRET_KEY}
@@ -123,12 +93,10 @@ def fetch_token():
         exit()
 
 
-"""
-    读取文件
-"""
-
-
 def read_file(image_path):
+    """
+    读取文件
+    """
     try:
         with open(image_path, 'rb') as f:
             return f.read()
@@ -137,12 +105,10 @@ def read_file(image_path):
         return None
 
 
-"""
-    调用远程服务
-"""
-
-
 def request_url(url, data):
+    """
+    调用远程服务
+    """
     req = Request(url, data.encode('utf-8'))
     try:
         f = urlopen(req)
@@ -176,30 +142,3 @@ def analyse_ocr(ocr_text: str):
     except json.JSONDecodeError as ignore:
         app.logger.info("JSON解析出错，内容是: %s", completion.choices[0].message.content.strip())
         return []
-
-
-def get_mission_new_word(word_txt: str):
-    word_txt = word_txt.lower()
-    url = f'https://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&q=\
-    {word_txt}&dicts=%7B%22count%22%3A99%2C%22dicts%22%3A%5B%5B%22ec%22%5D%5D%7D'
-    response = requests.get(url)
-    if response.status_code == 200:
-        try:
-            ret = response.json()
-            word = Word()
-            word.word = word_txt
-            word.usphone = ret['ec']['word'][0]['usphone']
-            word.usspeech = ret['ec']['word'][0]['usspeech']
-            word.trans_cn = ret['ec']['word'][0]['trs'][0]['tr'][0]['l']['i'][0]
-            word.type = 'KAO_YAN'
-            word.type_line = '10000'
-            db.session.add(word)
-            db.session.commit()
-            # print('添加新单词成功', word.word)
-            return word
-        except Exception as e:
-            print(e)
-            return None
-    else:
-        print('获取单词失败', response.status_code)
-        return None
