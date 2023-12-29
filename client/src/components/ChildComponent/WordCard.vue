@@ -1,52 +1,56 @@
 <template>
-  <div>
-    <van-overlay :show="show" @click="show = false" :lock-scroll="false">
-      <div class="wrapper" @click.stop>
-        <div class="block">
-          <!-- 两端对齐 -->
-          <van-row type="flex" justify="space-between">
-            <van-col span="3"></van-col>
-            <van-col span="18" style="text-align: center; margin-top: 10px">
-              <span style="font-size: 24px;">{{ word_detail.word }}</span>
-            </van-col>
-            <van-col span="3" style="text-align: right">
-              <van-icon name="close" size="30" @click="show = false" style="margin-right: 10px; margin-top: 10px"/>
-            </van-col>
-          </van-row>
-          <van-row style="text-align: center; margin-top: 10px; margin-left: 10px; margin-right: 10px;">
-            <span style="font-size: 14px; color: #505050; overflow: hidden; text-overflow: ellipsis">{{
-                this.truncatedText(word_detail.trans)
-              }}</span>
-            <van-divider/>
-          </van-row>
-          <van-row>
-            <van-tabs v-model="activeName" ref="tabs">
-              <van-tab title="网络释义" name="youdao">
-                <iframe :src="word_url" style="border: 0; width: 100%; height: 40vh">
-                </iframe>
-              </van-tab>
-              <van-tab title="语意关联词" name="word">
-                <van-list
-                    style="overflow: auto; height: 30vh; margin-left: 10px; margin-right: 10px"
-                    v-model="loading"
-                    :finished="finished"
-                    finished-text="没有更多了"
-                >
-                  <van-cell v-for="w in vector_link_words" :key="w.id" :title="w.word" :label="w.trans"
-                            @click="get_word_detail(w.word)"/>
-                </van-list>
-              </van-tab>
-            </van-tabs>
-          </van-row>
-          <van-grid clickable :column-num="3">
-            <van-grid-item text="加入生词本" icon="like-o" @click="start" />
-            <van-grid-item text="近期复习" icon="fire-o" @click="pause" />
-            <van-grid-item text="非常熟悉" icon="passed" @click="reset" />
-          </van-grid>
-        </div>
-      </div>
-    </van-overlay>
-  </div>
+    <div>
+        <van-overlay :show="show" @click="show = false" :lock-scroll="false">
+            <div class="wrapper" @click.stop>
+                <div class="block">
+                    <!-- 两端对齐 -->
+                    <van-row type="flex" justify="space-between">
+                        <van-col span="3"></van-col>
+                        <van-col span="18" style="text-align: center; margin-top: 10px">
+                            <span style="font-size: 24px;">{{ word_detail.word }}</span>
+                        </van-col>
+                        <van-col span="3" style="text-align: right">
+                            <van-icon name="close" size="30" @click="show = false"
+                                      style="margin-right: 10px; margin-top: 10px"/>
+                        </van-col>
+                    </van-row>
+                    <van-row style="text-align: center; margin-top: 10px; margin-left: 10px; margin-right: 10px;">
+                    <span style="font-size: 14px; color: #505050; overflow: hidden; text-overflow: ellipsis">{{
+                        this.truncatedText(word_detail.trans)
+                    }}</span>
+                        <van-divider/>
+                    </van-row>
+                    <van-row>
+                        <van-tabs v-model="activeName" ref="tabs">
+                            <van-tab title="网络释义" name="youdao">
+                                <iframe :src="word_url" style="border: 0; width: 100%; height: 30vh">
+                                </iframe>
+                            </van-tab>
+                            <van-tab title="语意关联词" name="word">
+                                <van-list
+                                    style="overflow: auto; height: 30vh; margin-left: 10px; margin-right: 10px"
+                                    v-model="loading"
+                                    :finished="finished"
+                                    finished-text="没有更多了"
+                                >
+                                    <van-cell v-for="w in vector_link_words" :key="w.id" :title="w.word"
+                                              :label="w.trans"
+                                              @click="get_word_detail(w.word)"/>
+                                </van-list>
+                            </van-tab>
+                        </van-tabs>
+                    </van-row>
+                    <van-row style="padding-bottom: 20px">
+                        <van-grid clickable :column-num="3">
+                            <van-grid-item text="加入生词本" icon="like-o" @click="start"/>
+                            <van-grid-item text="近期复习" icon="fire-o" @click="pause"/>
+                            <van-grid-item text="非常熟悉" icon="passed" @click="reset"/>
+                        </van-grid>
+                    </van-row>
+                </div>
+            </div>
+        </van-overlay>
+    </div>
 </template>
 
 <script>
@@ -149,7 +153,7 @@ export default {
 
 .block {
   width: 90%;
-  height: 65vh;
+  height: 450px;
   background-color: #fff;
   border-radius: 10px;
 }

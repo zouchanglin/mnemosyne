@@ -39,3 +39,18 @@ def get_word(word_txt: str) -> Word:
             print(e)
     else:
         print('获取单词失败', response.status_code)
+
+
+def getwordbyopemnai():
+    prompt = '''作为词典API，我给出单词，给我返回对应的JSON，格式如下：
+{
+	"word": "world", // 单词
+	"trans": "n.世界", // 词性，对应的翻译(可以是多个)
+	"exps": [ // 例句，可以是多个例句
+		{
+			"sentence": "hello world",
+			"sentence_trans": "你好世界"
+		}
+	]
+}'''
+    pass
