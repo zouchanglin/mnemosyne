@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div @touchmove.prevent @mousewheel.prevent>
     <van-row>
-      <div style="height: 50px; text-align: center">
+      <div style="height: 100px; text-align: center">
       </div>
     </van-row>
 

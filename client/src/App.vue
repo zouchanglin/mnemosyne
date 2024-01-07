@@ -13,18 +13,24 @@ export default {
 
   },
   mounted() {
-    // Dialog.confirm({
-    //   title: '全屏模式',
-    //   message: '是否需要进入全屏沉浸式体验?'
-    // })
-    //     .then(() => {
-    //       this.allScreen()
-    //     })
-    //     .catch(() => {
-    //       // on cancel
-    //     })
+    if (this.isAndroid()){
+      Dialog.confirm({
+        title: '全屏模式',
+        message: '是否需要进入全屏沉浸式体验?'
+      })
+          .then(() => {
+            this.allScreen()
+          })
+          .catch(() => {
+            // on cancel
+          })
+    }
   },
   methods: {
+    isAndroid() {
+      const u = navigator.userAgent
+      return u.indexOf('Android') > -1 || u.indexOf('Adr') > -1
+    },
     allScreen() {
       const domElement = document.documentElement
       if (domElement.requestFullscreen) {
@@ -40,5 +46,4 @@ export default {
 </script>
 
 <style>
-
 </style>

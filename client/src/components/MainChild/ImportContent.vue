@@ -1,11 +1,12 @@
 <template>
-  <div style="padding: 10px">
+  <div style="padding: 10px" class="hidden">
     <van-nav-bar
         left-text="返回"
         right-text=""
         left-arrow
         fixed="fixed"
-        placeholder="placeholder"
+        :placeholder="false"
+        style="background-color: #54d0ff"
         :safe-area-inset-top="true"
         @click-left="onClickLeft"
         >
@@ -13,6 +14,7 @@
         <span>导入单词</span>
       </template>
     </van-nav-bar>
+    <div style="width: 100vw; height: 46px"/>
     <van-notice-bar color="#1989fa" background="#ecf9ff" left-icon="info-o" scrollable>
       通过其他平台的学习截图，直接通过OCR导入所学单词，简单快捷！
     </van-notice-bar>
@@ -31,10 +33,9 @@
         </div>
       </van-form>
     </van-row>
-    <van-row>
+    <van-row style="overflow-y: scroll;">
       <van-list
           v-if="ocr_words.length > 0"
-          style="overflow: auto; height: 60vh;"
           v-model="loading"
           :finished="finished"
           finished-text="没有更多了"
@@ -54,8 +55,11 @@
     </word-card>
 
     <!-- 底部固定按钮 -->
-    <van-button class="fixed-bottom" v-if="ocr_words.length > 0" type="info" native-type="submit" icon="down"
-               round @click="importWords">确认导入已学习</van-button>
+    <van-button v-if="ocr_words.length > 0" type="info" native-type="submit" icon="down"
+                round @click="importWords" safe-area-inset-bottom
+                style="position: fixed; bottom: 0; justify-content: center; width: 45vw; margin-left: 25vw; margin-bottom: 50px"
+    >确认导入已学习</van-button>
+
   </div>
 </template>
 <script>
@@ -180,10 +184,8 @@ export default {
 }
 </script>
 <style scoped>
-.fixed-bottom {
-  position: fixed;
-  bottom: 0;
-  width: 95%;
-  margin-bottom: 10px;
+.hidden{
+  overflow-x:hidden;
 }
+
 </style>

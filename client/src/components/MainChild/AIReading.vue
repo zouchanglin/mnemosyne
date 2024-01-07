@@ -1,21 +1,22 @@
 <template>
   <div style="padding: 10px">
     <van-nav-bar
+        @nav-bar-title-text-color="white"
         left-text="返回"
         right-text=""
         left-arrow
         fixed="fixed"
-        placeholder="placeholder"
+        style="background-color: #00bdff"
+        :placeholder="false"
         :safe-area-inset-top="true"
         @click-left="onClickLeft"
         >
       <template #title>
-        <span>阅读记单词</span>
+        <span style="color: white">阅读记单词</span>
       </template>
     </van-nav-bar>
-
+    <div style="width: 100vw; height: 46px"/>
     <div class="container" @click="clickWord($event)" v-html="chContentSpan"></div>
-
     <word-card :word="word_txt" @close_word_card="word_txt=''">
     </word-card>
   </div>
@@ -201,5 +202,4 @@ class FetchEventSource {
   padding: 10px;
   line-height: 2.5;
 }
-
 </style>

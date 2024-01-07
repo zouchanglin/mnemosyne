@@ -38,7 +38,7 @@ def exec_start_ocr():
     # 拼接通用文字识别高精度url
     image_url = OCR_URL + "?access_token=" + token
 
-    text = ""
+    # text = ""
     ret_words: list[Word] = []
     for name in file_names:
         # 读取测试图片
@@ -47,14 +47,29 @@ def exec_start_ocr():
         result = request_url(image_url, urlencode({'image': base64.b64encode(file_content)}))
 
         # 解析返回结果
+        # result_json = json.loads(result)
+        # for words_result in result_json["words_result"]:
+        #     text = text + ',' + words_result["words"]
+        #     word = words_result["words"]
+        #     # word先专为小写
+        #     word = word.lower()
+        #     # 数据库查找word，存在就放在list里
+        #     ret_words.append(get_word(word))
+        # for words_result in result_json["words_result"]:
+        #     text = text + ',' + words_result["words"]
+
+        ocr_result_words = []
         result_json = json.loads(result)
         for words_result in result_json["words_result"]:
-            text = text + ',' + words_result["words"]
-            word = words_result["words"]
-            # word先专为小写
-            word = word.lower()
-            # 数据库查找word，存在就放在list里
-            ret_words.append(get_word(word))
+            ocr_result_words.append(words_result["words"].lower())
+        x = '\n'.join(ocr_result_words)
+        ai_result = analyse_ocr(x)
+        for words in ai_result['words']:
+            word = words.lower()
+            w = get_word(word)
+            if w is not None and len(w.word) > 2 and w.trans is not None:
+                ret_words.append(w)
+
     # 对ret_words进行去重
     ret_words = list(set(ret_words))
     # 去掉null元素
@@ -118,27 +133,29 @@ def request_url(url, data):
         print(e)
 
 
-def analyse_ocr(ocr_text: str):
+def analyse_ocr(ocr_text: str) -> dict:
     """
     分析OCR结果
     :return:
     """
     ocr_text = ocr_text.lower()
-    prompt = f'''帮我分析这段OCR数据，提取其中的英文单词:
-    {ocr_text}
-    仅仅给我返回标准JSON格式的单词数组即可，比如:["hello","word"]'''
+    prompt = '''帮我分析OCR结果数据，提取其中的英语单词
+##返回JSON格式的单词数组##
+{"words":[]}
+'''
 
-    messages = [{"role": "system", "content": prompt}]
+    messages = [{"role": "system", "content": prompt},
+                {"role": "user", "content": ocr_text}]
     completion = client.chat.completions.create(
         # https://platform.openai.com/docs/guides/text-generation/json-mode 详细说明
-        model="gpt-3.5-turbo-1106",
+        model="gpt-3.5-turbo",
         messages=messages,
         temperature=0.0,
-        response_format={"type": "json_object"},
+        # response_format={"type": "json_object"},
     )
 
     try:
         return json.loads(completion.choices[0].message.content.strip())
     except json.JSONDecodeError as ignore:
         app.logger.info("JSON解析出错，内容是: %s", completion.choices[0].message.content.strip())
-        return []
+        return {"words": []}

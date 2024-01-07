@@ -1,7 +1,19 @@
 <template>
-  <div>
-    <van-sticky>
-    </van-sticky>
+  <div @touchmove.prevent @mousewheel.prevent>
+    <van-nav-bar
+        left-text=""
+        right-text=""
+        fixed="fixed"
+        :placeholder="false"
+        :left-arrow="false"
+        style="background-color: #00bdff"
+        :safe-area-inset-top="true"
+    >
+      <template #title>
+        <span></span>
+      </template>
+    </van-nav-bar>
+    <div style="width: 100vw; height: 46px"/>
     <van-grid square :gutter="10" :column-num="3">
       <van-grid-item icon="flag-o" text="学新单词" to="/word-study" />
       <van-grid-item icon="certificate" text="复习单词" to="/word-revise" />

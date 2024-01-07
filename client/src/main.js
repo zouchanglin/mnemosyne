@@ -4,7 +4,7 @@ import router from './router'
 import './plugins/vant.js'
 import './plugins/md5.js'
 import 'vant/lib/index.css'
-
+import './assets/css/globle.css'
 import axios from 'axios'
 
 Vue.prototype.$http = axios

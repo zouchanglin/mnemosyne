@@ -69,7 +69,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style scoped>
 html, body {
   height: 100%;
   margin: 0;
