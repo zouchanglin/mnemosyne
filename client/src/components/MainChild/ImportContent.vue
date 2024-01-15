@@ -1,17 +1,16 @@
 <template>
   <div style="padding: 10px" class="hidden">
     <van-nav-bar
-        left-text="返回"
         right-text=""
         left-arrow
         fixed="fixed"
         :placeholder="false"
-        style="background-color: #54d0ff"
         :safe-area-inset-top="true"
         @click-left="onClickLeft"
+        title="导入单词"
         >
-      <template #title>
-        <span>导入单词</span>
+      <template #left>
+        <span style="color: white">返回</span>
       </template>
     </van-nav-bar>
     <div style="width: 100vw; height: 46px"/>
@@ -51,7 +50,7 @@
       </van-list>
     </van-row>
 
-    <word-card :word_id="word_id" @close_word_card="word_id=-1">
+    <word-card :word="word">
     </word-card>
 
     <!-- 底部固定按钮 -->
@@ -73,7 +72,7 @@ export default {
       buttonLoading: false,
       loading: false,
       finished: false,
-      word_id: 0,
+      word: '',
       audio: new Audio(),
       ocr_words: [],
       fileList: [

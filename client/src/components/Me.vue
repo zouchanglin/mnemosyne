@@ -1,10 +1,18 @@
 <template>
   <div @touchmove.prevent @mousewheel.prevent>
-    <van-row>
-      <div style="height: 100px; text-align: center">
-      </div>
-    </van-row>
-
+    <van-nav-bar
+        left-text=""
+        right-text=""
+        fixed="fixed"
+        :placeholder="false"
+        :left-arrow="false"
+        :safe-area-inset-top="true"
+    >
+      <template #title>
+        <span style="color: white"></span>
+      </template>
+    </van-nav-bar>
+    <div style="width: 100vw; height: 46px"/>
     <van-row>
       <van-col span="6"></van-col>
       <van-col span="12" style="text-align: center">

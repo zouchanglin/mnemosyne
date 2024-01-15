@@ -6,17 +6,14 @@
         fixed="fixed"
         :placeholder="false"
         :left-arrow="false"
-        style="background-color: #00bdff"
         :safe-area-inset-top="true"
     >
       <template #title>
-        <span></span>
+        <span style="color: white"> 极简单词 </span>
       </template>
     </van-nav-bar>
     <div style="width: 100vw; height: 46px"/>
-    <van-grid square :gutter="10" :column-num="3">
-      <van-grid-item icon="flag-o" text="学新单词" to="/word-study" />
-      <van-grid-item icon="certificate" text="复习单词" to="/word-revise" />
+    <van-grid square :gutter="10" :column-num="3" style="margin-top: 20px">
       <van-grid-item icon="notes-o" text="单词阅读" to="/ai-reading"/>
       <van-grid-item icon="down" text="导入单词" to="/import-content"/>
     </van-grid>

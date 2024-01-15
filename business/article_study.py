@@ -25,7 +25,7 @@ def generate():
     words = [w.word for w in words]
     # words转为JSON数组字符串
     words = str(words)
-    prompt = f'''给你一些单词你通过这些单词生成一篇长度100词内小短文，文章尽量短小，文章中其他单词尽量使用我提供的可选词
+    prompt = f'''给你一些单词你通过这些单词生成一篇长度100词内英文小短文，文章尽量短小，文章中其他单词尽量使用我提供的可选词
 单词如下：
 {words}
 可选词:

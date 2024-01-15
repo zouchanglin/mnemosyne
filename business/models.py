@@ -1,6 +1,8 @@
 # coding: utf-8
 from dataclasses import dataclass
-from sqlalchemy import Column, DateTime, Integer, String, Boolean
+from typing import Union
+
+from sqlalchemy import Column, DateTime, Integer, String, Boolean, ColumnOperators
 
 from business.utils.common_tools import get_now_time
 from database import db
@@ -40,7 +42,7 @@ class UserProfile(Base):
 @dataclass
 class Word(Base):
     __tablename__ = 'mne_word'
-    id: int = Column(Integer, primary_key=True, autoincrement=True)
+    id: Union[int, ColumnOperators] = Column(Integer, primary_key=True, autoincrement=True)
     word: str = Column(String(32), nullable=False, default='', comment='单词')
     trans: str = Column(String(256), nullable=False, default='', comment='中文翻译')
     create_time: DateTime = Column(DateTime, nullable=False,

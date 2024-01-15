@@ -31,25 +31,13 @@ def get_word(word_txt: str) -> Word | None:
                 trans_index += 1
             db.session.add(word)
             db.session.commit()
+            # 存入向量数据库
+            from business.embedding.vector_tools import word_to_vector_db
+            word_to_vector_db(word)
             return word
         except Exception or KeyError as e:
+            app.logger.exception(e)
             app.logger.info('未找到翻译, word: ' + word_txt)
     else:
         app.logger.info('获取单词失败', response.status_code)
     return None
-
-
-def get_word_by_openai():
-    prompt = '''作为词典API，我给出单词，给我返回对应的JSON，格式如下：
-    {
-        "word": "world", // 单词
-        "trans": "n.世界", // 词性，对应的翻译(可以是多个)
-        "exps": [ // 例句，可以是多个例句
-            {
-                "sentence": "hello world",
-                "sentence_trans": "你好世界"
-            }
-        ]
-    }'''
-    print(prompt)
-    pass

@@ -1,28 +1,27 @@
 <template>
   <div style="padding: 10px">
     <van-nav-bar
-        @nav-bar-title-text-color="white"
-        left-text="返回"
         right-text=""
         left-arrow
         fixed="fixed"
-        style="background-color: #00bdff"
         :placeholder="false"
         :safe-area-inset-top="true"
         @click-left="onClickLeft"
+        title="阅读记单词"
         >
-      <template #title>
-        <span style="color: white">阅读记单词</span>
-      </template>
+        <template #left>
+          <span style="color: white">返回</span>
+        </template>
     </van-nav-bar>
     <div style="width: 100vw; height: 46px"/>
     <div class="container" @click="clickWord($event)" v-html="chContentSpan"></div>
-    <word-card :word="word_txt" @close_word_card="word_txt=''">
+    <word-card :word="word_txt">
     </word-card>
   </div>
 </template>
 <script>
 import WordCard from '@/components/ChildComponent/WordCard.vue'
+import {log} from "echarts/types/src/util/log";
 
 export default {
   name: 'AIReading',
@@ -31,7 +30,8 @@ export default {
     return {
       word_txt: '',
       audio: new Audio(),
-      chContent: 'The philosophy of life is to find meaning in every substantial moment, but sometimes anxiety can stir in the chamber of our minds, making concentration difficult. There is controversy over what should constitute a true alliance, and some may pant for an incentive to join. However, any assault on our reservation can violate our trust and portray an ally in a negative light. It\'s important to incorporate good tactics and gear up for any word or penalty that may come our way. Just like a priest in battle, we must be ready to defend our beliefs and stand firm in our convictions.',
+      // chContent: 'The philosophy of life is to find meaning in every substantial moment, but sometimes anxiety can stir in the chamber of our minds, making concentration difficult. There is controversy over what should constitute a true alliance, and some may pant for an incentive to join. However, any assault on our reservation can violate our trust and portray an ally in a negative light. It\'s important to incorporate good tactics and gear up for any word or penalty that may come our way. Just like a priest in battle, we must be ready to defend our beliefs and stand firm in our convictions.',
+      chContent: '',
       chContentSpan: 'AAA'
     }
   },
@@ -41,7 +41,7 @@ export default {
     this.audio.autoplay = true
   },
   mounted() {
-    // this.startReading()
+    this.startReading()
     this.chContentSpan = this.addElementSpan(this.chContent)
     console.log(this.chContentSpan)
   },
@@ -66,6 +66,7 @@ export default {
       })
     },
     decodeSSEString(sseString, eventFetch){
+      console.log(sseString)
       const sseArray = sseString.split('\n')
       let eventV
       let dataV

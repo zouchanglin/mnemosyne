@@ -3,9 +3,11 @@ import App from './App.vue'
 import router from './router'
 import './plugins/vant.js'
 import './plugins/md5.js'
-import 'vant/lib/index.css'
+// import 'vant/lib/index.css'
 import './assets/css/globle.css'
 import axios from 'axios'
+// main.js
+import 'vant/lib/index.less'
 
 Vue.prototype.$http = axios
 

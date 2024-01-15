@@ -73,7 +73,7 @@ def error_handler(e):
 
 
 @app.errorhandler(404)
-def page_not_found(e):
+def page_not_found():
     return app.send_static_file('index.html')
 
 
@@ -99,4 +99,7 @@ if __name__ == '__main__':
     app.register_blueprint(FileManager)
     app.register_blueprint(LogSSE)
     app.register_blueprint(OCRAssistant)
+
+    from milvus_tables import init_milvus
+    init_milvus()
     app.run(host='0.0.0.0', port=5005, debug=False)
